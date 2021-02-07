@@ -1,0 +1,4 @@
+example_function:
+  kwarg_1 : 2
+  kwarg_2 : 'function_test'
+  kwarg_3 : yaml_test

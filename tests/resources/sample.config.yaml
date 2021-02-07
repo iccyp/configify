@@ -1,0 +1,9 @@
+sample_module:
+  SampleClass:
+    kwarg1: 1
+    sample_method:
+      kwarg1: 2
+  sample_function:
+    kwarg1: 1
+  sample_function_2:
+    kwarg1: 1

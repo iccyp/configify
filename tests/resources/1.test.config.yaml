@@ -1,0 +1,25 @@
+example_module1:
+  ExampleClass11:
+    kwarg_1101 : 1
+    kwarg_1102 : 'test'
+    example_function111:
+      kwarg_1111 : 2
+      kwarg_1112 : 'function_test'
+      kwarg_1113 : yaml_test
+  ExampleClass12:
+    kwarg_1201: 1
+    kwarg_1202: 'test'
+    example_function121:
+      kwarg_1211: 2
+      kwarg_1212: 'function_test'
+      kwarg_1213: yaml_test
+    example_function122:
+      kwarg_1221: 2
+      kwarg_1222: 'function_test'
+      kwarg_1223: yaml_test
+
+example_module_2:
+  ExampleClass21:
+    example_function211:
+      kwarg_2111: 1
+      kwarg_2112: 'test'
