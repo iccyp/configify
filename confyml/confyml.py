@@ -96,6 +96,7 @@ class Config:
 
         conf = self._get_config(func_to_replace[0])
         conf.update(**kwargs)
+        print(f'INFO - Applying config to {func.__qualname__}')
         return func(*args, **conf)
 
 

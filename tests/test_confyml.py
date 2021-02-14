@@ -1,4 +1,6 @@
+from io import StringIO
 import os
+import sys
 import unittest
 from importlib import reload
 
@@ -74,6 +76,16 @@ class TestConfigMethodsMode2(unittest.TestCase):
         self.assertEqual((2, 1), ret)
         ret = sample_module.sample_function()
         self.assertEqual(1, ret)
+
+    def test_should_print_when_apply_config(self):
+        confyml.set_config('resources/2.sample.config.yaml', 'cf')
+        reload(sample_module)
+        captured_output = StringIO()
+        sys.stdout = captured_output
+        ret = sample_module.SampleClass().sample_method()
+        printed = captured_output.getvalue()
+        self.assertIn('INFO - Applying config to SampleClass.__init__',
+                      printed)
 
 
 class TestConfigMethodsMode1(unittest.TestCase):
