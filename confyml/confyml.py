@@ -1,15 +1,18 @@
+import logging
 import os
 import traceback
-import warnings
 from functools import wraps
 from typing import List, Tuple, Set, Dict
 
 import yaml
 
 
+logger = logging.getLogger(__name__)
+
+
 class Config:
 
-    def __init__(self, yaml_file: str, mode: str = 'mcf') -> None:
+    def __init__(self, yaml_file: str, mode: str = None) -> None:
         """
         Instantiate the Config class
 
@@ -96,7 +99,7 @@ class Config:
 
         conf = self._get_config(func_to_replace[0])
         conf.update(**kwargs)
-        print(f'INFO - Applying config to {func.__qualname__}')
+        logger.info(f'Applying config to {func.__qualname__}')
         return func(*args, **conf)
 
 
@@ -130,7 +133,9 @@ def _reduce(ds: List[Tuple], store: List = None) -> Tuple[List[Tuple], List]:
     return dicts, store
 
 
-def set_config(yaml_path, mode='mcf'):
+def set_config(yaml_path, mode=None):
+    if not mode:
+        raise AttributeError('Mode not provided to confyml.set_config.')
     stack = traceback.extract_stack()
     caller = os.path.dirname(stack[-2].filename)
     full_path = os.path.realpath(os.path.join(caller, yaml_path))
@@ -151,9 +156,8 @@ def get_config():
     mode = os.environ.get('CONFYML_MODE')
 
     if file is None:
-        warnings.warn("Confyml Config imported without config file set. Set "
-                      "environment variable CONFYML_CONFIG to apply "
-                      "config.", UserWarning, stacklevel=2)
-    if mode:
-        return Config(file, mode=mode)
-    return Config(file)
+        logger.warning("Confyml Config imported without config file set. Set "
+                       "environment variable CONFYML_CONFIG to apply "
+                       "config.", UserWarning, stacklevel=2)
+
+    return Config(file, mode=mode)
