@@ -1,3 +1,4 @@
+import logging
 import os
 import traceback
 import warnings
@@ -7,9 +8,12 @@ from typing import List, Tuple, Set, Dict
 import yaml
 
 
+logger = logging.getLogger(__name__)
+
+
 class Config:
 
-    def __init__(self, yaml_file: str, mode: str = 'mcf') -> None:
+    def __init__(self, yaml_file: str, mode: str = None) -> None:
         """
         Instantiate the Config class
 
@@ -25,6 +29,8 @@ class Config:
               'cf' : classes and methods and/or functions.
               'f' : functions only.
         """
+        if not mode:
+            raise AttributeError('Mode not provided to confyml.')
         self._path = yaml_file
         self._mode_name = mode
         mode_map = {'mcf': 3, 'mf': 2, 'cf': 2, 'f': 1}
@@ -96,7 +102,7 @@ class Config:
 
         conf = self._get_config(func_to_replace[0])
         conf.update(**kwargs)
-        print(f'INFO - Applying config to {func.__qualname__}')
+        logger.info(f'Applying config to {func.__qualname__}')
         return func(*args, **conf)
 
 
