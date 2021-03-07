@@ -6,6 +6,8 @@ from importlib import reload
 
 from confyml import confyml
 
+confyml.set_config('resources/2.sample.config.yaml', mode='cf')
+
 from tests.resources import sample_module
 
 FILE_PATH = os.path.dirname(__file__)
@@ -70,22 +72,12 @@ class TestConfigMethodsMode2(unittest.TestCase):
         self.assertDictEqual(expt, conf)
 
     def test_should_apply_config(self):
-        confyml.set_config('resources/2.sample.config.yaml', 'cf')
+        confyml.set_config('resources/2.sample.config.yaml', mode='cf')
         reload(sample_module)
         ret = sample_module.SampleClass().sample_method()
         self.assertEqual((2, 1), ret)
         ret = sample_module.sample_function()
         self.assertEqual(1, ret)
-
-    def test_should_print_when_apply_config(self):
-        confyml.set_config('resources/2.sample.config.yaml', 'cf')
-        reload(sample_module)
-        captured_output = StringIO()
-        sys.stdout = captured_output
-        ret = sample_module.SampleClass().sample_method()
-        printed = captured_output.getvalue()
-        self.assertIn('INFO - Applying config to SampleClass.__init__',
-                      printed)
 
 
 class TestConfigMethodsMode1(unittest.TestCase):
@@ -111,7 +103,7 @@ class TestConfigMethodsMode1(unittest.TestCase):
         self.assertDictEqual(expt, actual)
 
     def test_should_apply_config(self):
-        confyml.set_config('resources/sample.config.yaml', 'mcf')
+        confyml.set_config('resources/sample.config.yaml', mode='mcf')
         reload(sample_module)
         ret = sample_module.SampleClass().sample_method()
         self.assertEqual((2, 1), ret)
@@ -127,7 +119,7 @@ class TestConfigMethodsMode1(unittest.TestCase):
         self.assertEqual(None, ret)
 
     def test_should_be_overwritten_by_call(self):
-        confyml.set_config('resources/sample.config.yaml', 'mcf')
+        confyml.set_config('resources/sample.config.yaml', mode='mcf')
         reload(sample_module)
         ret = sample_module.sample_function_2(kwarg1=2)
         self.assertEqual(2, ret)

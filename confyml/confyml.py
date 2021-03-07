@@ -1,7 +1,6 @@
 import logging
 import os
 import traceback
-import warnings
 from functools import wraps
 from typing import List, Tuple, Set, Dict
 
@@ -29,8 +28,6 @@ class Config:
               'cf' : classes and methods and/or functions.
               'f' : functions only.
         """
-        if not mode:
-            raise AttributeError('Mode not provided to confyml.')
         self._path = yaml_file
         self._mode_name = mode
         mode_map = {'mcf': 3, 'mf': 2, 'cf': 2, 'f': 1}
@@ -136,7 +133,9 @@ def _reduce(ds: List[Tuple], store: List = None) -> Tuple[List[Tuple], List]:
     return dicts, store
 
 
-def set_config(yaml_path, mode='mcf'):
+def set_config(yaml_path, mode=None):
+    if not mode:
+        raise AttributeError('Mode not provided to confyml.set_config.')
     stack = traceback.extract_stack()
     caller = os.path.dirname(stack[-2].filename)
     full_path = os.path.realpath(os.path.join(caller, yaml_path))
@@ -157,9 +156,8 @@ def get_config():
     mode = os.environ.get('CONFYML_MODE')
 
     if file is None:
-        warnings.warn("Confyml Config imported without config file set. Set "
-                      "environment variable CONFYML_CONFIG to apply "
-                      "config.", UserWarning, stacklevel=2)
-    if mode:
-        return Config(file, mode=mode)
-    return Config(file)
+        logger.warning("Confyml Config imported without config file set. Set "
+                       "environment variable CONFYML_CONFIG to apply "
+                       "config.", UserWarning, stacklevel=2)
+
+    return Config(file, mode=mode)
