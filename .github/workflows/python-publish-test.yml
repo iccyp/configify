@@ -5,8 +5,8 @@ name: Upload Python Package to Test
 
 on:
   push:
-    tags:
-      - '*'
+    paths:
+      - 'confyml/__init__.py'
 
 jobs:
   deploy:
