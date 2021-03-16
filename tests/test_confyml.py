@@ -1,4 +1,3 @@
-from io import StringIO
 import os
 import sys
 import unittest
@@ -21,6 +20,7 @@ class TestConfigMethodsMode3(unittest.TestCase):
                                      file_path,
                                      'resources/1.test.config.yaml'))
         self._sut = confyml.Config(yaml_file, mode='mcf')
+        self._sample_module = sys.modules['tests.resources.sample_module']
 
     def test_object_is_config(self):
         self.assertIsInstance(self._sut, confyml.Config)
@@ -53,6 +53,7 @@ class TestConfigMethodsMode2(unittest.TestCase):
                                      file_path,
                                      'resources/2.test.config.yaml'))
         self._sut = confyml.Config(yaml_file, mode='cf')
+        self._sample_module = sys.modules['tests.resources.sample_module']
 
     def test_object_is_config(self):
         self.assertIsInstance(self._sut, confyml.Config)
@@ -73,7 +74,7 @@ class TestConfigMethodsMode2(unittest.TestCase):
 
     def test_should_apply_config(self):
         confyml.set_config('resources/2.sample.config.yaml', mode='cf')
-        reload(sample_module)
+        reload(self._sample_module)
         ret = sample_module.SampleClass().sample_method()
         self.assertEqual((2, 1), ret)
         ret = sample_module.sample_function()
@@ -87,6 +88,7 @@ class TestConfigMethodsMode1(unittest.TestCase):
                                      FILE_PATH,
                                      'resources/3.test.config.yaml'))
         self._sut = confyml.Config(objects, mode='f')
+        self._sample_module = sys.modules['tests.resources.sample_module']
 
     def test_object_is_config(self):
         self.assertIsInstance(self._sut, confyml.Config)
@@ -104,7 +106,7 @@ class TestConfigMethodsMode1(unittest.TestCase):
 
     def test_should_apply_config(self):
         confyml.set_config('resources/sample.config.yaml', mode='mcf')
-        reload(sample_module)
+        reload(self._sample_module)
         ret = sample_module.SampleClass().sample_method()
         self.assertEqual((2, 1), ret)
         ret = sample_module.sample_function()
@@ -112,7 +114,7 @@ class TestConfigMethodsMode1(unittest.TestCase):
 
     def test_should_not_apply_config(self):
         os.environ['CONFYML_CONFIG'] = ''
-        reload(sample_module)
+        reload(self._sample_module)
         ret = sample_module.SampleClass().sample_method()
         self.assertEqual((1, None), ret)
         ret = sample_module.sample_function()
@@ -120,8 +122,20 @@ class TestConfigMethodsMode1(unittest.TestCase):
 
     def test_should_be_overwritten_by_call(self):
         confyml.set_config('resources/sample.config.yaml', mode='mcf')
-        reload(sample_module)
+        reload(self._sample_module)
         ret = sample_module.sample_function_2(kwarg1=2)
         self.assertEqual(2, ret)
         ret = sample_module.sample_function_3()
         self.assertIsNone(ret)
+
+
+class TestWithoutConfig(unittest.TestCase):
+
+    def setUp(self) -> None:
+        self._sample_module = sys.modules['tests.resources.sample_module']
+
+    def test_should_import_without_config(self):
+        # act - clear config
+        confyml.clear_config()
+        # assert
+        reload(self._sample_module)

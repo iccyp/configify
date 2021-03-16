@@ -31,7 +31,9 @@ class Config:
         self._path = yaml_file
         self._mode_name = mode
         mode_map = {'mcf': 3, 'mf': 2, 'cf': 2, 'f': 1}
-        self._mode = mode_map[mode]
+        self._mode = None
+        if mode is not None:
+            self._mode = mode_map[mode]
         self._config = {}
         if yaml_file:
             with open(yaml_file, 'r') as f:
@@ -59,10 +61,11 @@ class Config:
         named = (None, self._config.copy())
 
         out, log = _reduce([named])
-
-        for i in range(self.mode):
-            out, log = _reduce(out, log)
-        return list(set(log))
+        if self.mode is not None:
+            for i in range(self.mode):
+                out, log = _reduce(out, log)
+            return list(set(log))
+        return []
 
     def _get_config(self, name) -> Dict:
         conf = self._config.copy()
@@ -161,3 +164,8 @@ def get_config():
                        "config.", UserWarning, stacklevel=2)
 
     return Config(file, mode=mode)
+
+
+def clear_config():
+    del os.environ['CONFYML_CONFIG']
+    del os.environ['CONFYML_MODE']
