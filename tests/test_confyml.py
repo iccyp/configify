@@ -137,5 +137,6 @@ class TestWithoutConfig(unittest.TestCase):
     def test_should_import_without_config(self):
         # act - clear config
         confyml.clear_config()
-        # assert
         reload(self._sample_module)
+        # assert
+        sample_module.SampleClass()

@@ -84,15 +84,18 @@ class Config:
                         'cf': func.__qualname__,
                         'mcf': f'{func.__module__.split(".")[-1]}'
                                f'.{func.__qualname__}'}
-
-            name = name_map[self._mode_name]
+            try:
+                name = name_map[self._mode_name]
+            except KeyError:
+                logger.warning('No mode set, returning original function call')
+                name = ''
             if '.__init__' in name:
                 name = name.replace('.__init__', '')
             return self._wrap(name, func, *args, **kwargs)
         return wrapper
 
     def _wrap(self, name, func, *args, **kwargs):
-        if name not in self._configured:
+        if name == '' or name not in self._configured:
             return func(*args, **kwargs)
 
         func_to_replace = [fn for fn in self._configured if fn == name]
