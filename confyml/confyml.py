@@ -164,7 +164,7 @@ def get_config():
     if file is None:
         logger.warning("Confyml Config imported without config file set. Set "
                        "environment variable CONFYML_CONFIG to apply "
-                       "config.", UserWarning, stacklevel=2)
+                       "config.")
 
     return Config(file, mode=mode)
 
